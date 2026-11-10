@@ -2,13 +2,25 @@
 
 A minimal gothic Windows 11 desktop theme in ember red and halo silver: a spaced weekday clock, a floating tinted dock, a matching Windows Terminal scheme and a PowerShell prompt. Every color is sampled from the included wallpaper.
 
+![Requiem desktop on a 3440×1440 ultrawide](docs/desktop.jpg)
+
+## Screenshots
+
+**Floating dock and tray** (Windhawk Taskbar Styler, `DockLike` + Requiem overrides)
+
+![Dock and tray](docs/dock.png)
+
+**Windows Terminal** with the "Seele Requiem" scheme, faint wallpaper and the Requiem prompt (`terminal/palette-demo.ps1` prints the swatches)
+
+![Windows Terminal](docs/terminal.jpg)
+
 ## Components
 
 | Part | Tool | Source |
 | :--- | :--- | :--- |
 | Weekday / date / time | [Rainmeter](https://www.rainmeter.net/) 4.5+ | `rainmeter/Requiem/Requiem.ini` |
 | Floating dock and tray | [Windhawk](https://windhawk.net/) + mod *Windows 11 Taskbar Styler*, theme `DockLike` with Requiem overrides | `windhawk/taskbar-styler-requiem.yaml` |
-| Windows Terminal | color scheme + tab theme "Seele Requiem", acrylic, faint wallpaper | `terminal/seele-requiem.json` |
+| Windows Terminal | color scheme + tab theme "Seele Requiem", acrylic, faint wallpaper | `terminal/seele-requiem.json`, `terminal/palette-demo.ps1` |
 | PowerShell prompt | Windows PowerShell 5.1, no extra modules | `powershell/requiem-prompt.ps1` |
 | Tab / profile icon | halo + ember cross, generated | `icons/requiem.png`, `icons/make-icon.ps1` |
 | Wallpaper | 1376×768 | `wallpaper/seele-desktop.jpg` |
@@ -31,6 +43,8 @@ Requirements: Windows 11, Rainmeter, Windhawk.
 winget install --id Rainmeter.Rainmeter --exact
 winget install --id RamenSoftware.Windhawk --exact
 ```
+
+The winget install of Rainmeter does not add an autostart entry. To keep the clock after a reboot, add a shortcut to Rainmeter in `shell:startup`.
 
 1. **Rainmeter skin + hidden desktop icons**
    ```powershell
