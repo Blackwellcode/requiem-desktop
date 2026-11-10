@@ -1,6 +1,6 @@
-# Blendet Desktop-Symbole aus/ein, ohne Explorer neu zu starten.
-#   -Hide : ausblenden (Standard)   -Show : einblenden
-# Mechanik: WM_COMMAND 0x7402 an SHELLDLL_DefView (entspricht "Ansicht > Desktopsymbole anzeigen").
+# Hides or shows the desktop icons without restarting Explorer.
+#   (default) : hide     -Show : show
+# Mechanism: WM_COMMAND 0x7402 to SHELLDLL_DefView (same as desktop context menu > View > Show desktop icons).
 param([switch]$Show)
 $ErrorActionPreference = 'Stop'
 
@@ -34,7 +34,7 @@ public static class DeskIcons {
     }
     public static void Toggle() {
         IntPtr v = FindDefView();
-        if (v == IntPtr.Zero) throw new InvalidOperationException("SHELLDLL_DefView nicht gefunden");
+        if (v == IntPtr.Zero) throw new InvalidOperationException("SHELLDLL_DefView not found");
         SendMessage(v, 0x0111, (IntPtr)0x7402, IntPtr.Zero);
     }
 }
@@ -42,8 +42,8 @@ public static class DeskIcons {
 
 $want = if ($Show) { 1 } else { 0 }
 $state = [DeskIcons]::State()
-if ($state -lt 0) { throw 'Desktop-Fenster nicht gefunden.' }
+if ($state -lt 0) { throw 'Desktop window not found.' }
 if ($state -ne $want) { [DeskIcons]::Toggle(); Start-Sleep -Milliseconds 400 }
 $after = [DeskIcons]::State()
-Write-Host ("Desktop-Symbole: vorher={0} nachher={1} (1=sichtbar)" -f $state, $after)
-if ($after -ne $want) { throw "Umschalten fehlgeschlagen (Status $after)." }
+Write-Host ("Desktop icons: before={0} after={1} (1=visible)" -f $state, $after)
+if ($after -ne $want) { throw "Toggle failed (state $after)." }

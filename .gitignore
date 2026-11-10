@@ -2,5 +2,8 @@
 backup/
 windhawk/*.reg
 
+# Build output (published as GitHub release asset)
+dist/
+
 # Generated preview
 icons/requiem_32_preview.png
