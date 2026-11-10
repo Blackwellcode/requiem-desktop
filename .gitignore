@@ -1,0 +1,6 @@
+# Machine-specific backups and registry exports (local only)
+backup/
+windhawk/*.reg
+
+# Generated preview
+icons/requiem_32_preview.png

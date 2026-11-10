@@ -1,0 +1,54 @@
+{
+    "$comment": "Merge 'scheme' into settings.json > schemes and 'theme' into settings.json > themes. Then set \"theme\": \"Seele Requiem\" and profiles.defaults.colorScheme = \"Seele Requiem\".",
+    "scheme": {
+        "name": "Seele Requiem",
+        "background": "#0A0303",
+        "foreground": "#DCD8D4",
+        "cursorColor": "#C03E45",
+        "selectionBackground": "#5A1418",
+        "black": "#100000",
+        "red": "#C03E45",
+        "green": "#8A9A7B",
+        "yellow": "#C9A15B",
+        "blue": "#6E7F99",
+        "purple": "#9A6A8C",
+        "cyan": "#7A9A9A",
+        "white": "#A0A09E",
+        "brightBlack": "#5A4A4A",
+        "brightRed": "#E05A61",
+        "brightGreen": "#A6B897",
+        "brightYellow": "#E0C07F",
+        "brightBlue": "#8FA0BA",
+        "brightPurple": "#B98AAC",
+        "brightCyan": "#9DBDBD",
+        "brightWhite": "#E6E2DE"
+    },
+    "theme": {
+        "name": "Seele Requiem",
+        "tab": {
+            "background": "#2A0A0CFF",
+            "showCloseButton": "hover",
+            "unfocusedBackground": "#0A0303FF"
+        },
+        "tabRow": {
+            "background": "#0A0303FF",
+            "unfocusedBackground": "#0A0303FF"
+        },
+        "window": {
+            "applicationTheme": "dark",
+            "useMica": false
+        }
+    },
+    "profileDefaults": {
+        "colorScheme": "Seele Requiem",
+        "backgroundImage": "<path-to-repo>\\wallpaper\\seele-desktop.jpg",
+        "backgroundImageAlignment": "center",
+        "backgroundImageOpacity": 0.12,
+        "backgroundImageStretchMode": "uniformToFill",
+        "cursorShape": "bar",
+        "opacity": 92,
+        "padding": "14, 12, 14, 12",
+        "useAcrylic": true,
+        "icon": "<path-to-repo>\\icons\\requiem.png"
+    }
+}

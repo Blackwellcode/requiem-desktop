@@ -1,0 +1,24 @@
+theme: DockLike
+styleConstants:
+  - SeeleDock=<AcrylicBrush TintColor="#200000" TintOpacity="0.72" FallbackColor="#100000" />
+  - SeeleEdge=<SolidColorBrush Color="#8E1C21" Opacity="0.55" />
+controlStyles:
+  - target: Taskbar.TaskbarFrame > Grid#RootGrid
+    styles:
+      - Margin=0,1,0,3
+  - target: Taskbar.TaskbarFrame > Grid#RootGrid > Taskbar.TaskbarBackground > Grid
+    styles:
+      - Background:=$SeeleDock
+      - CornerRadius=8
+      - BorderThickness=1
+      - BorderBrush:=$SeeleEdge
+  - target: StackPanel#SystemTrayFrameGrid, Grid#SystemTrayFrameGrid
+    styles:
+      - Background:=$SeeleDock
+      - Margin=8,1,8,3
+      - BorderThickness=1
+      - BorderBrush:=$SeeleEdge
+themeResourceVariables:
+  - ''
+clickThroughTaskbar: false
+xamlDiagnosticsHandling: alert
