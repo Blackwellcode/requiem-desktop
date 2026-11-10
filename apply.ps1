@@ -1,10 +1,12 @@
 # ==============================================================================
 # Requiem - Desktop-Setup anwenden (Seele Blackwell Gothic)
 # Idempotent: kann beliebig oft ausgefuehrt werden.
-#   -SkipExplorer : Desktop-Icons/Explorer-Neustart ueberspringen
+#   -SkipExplorer  : Desktop-Icons/Explorer-Neustart ueberspringen
+#   -NoAutostart   : keine Rainmeter-Verknuepfung im Autostart-Ordner anlegen
 # ==============================================================================
 param(
     [switch]$SkipExplorer,
+    [switch]$NoAutostart,
     [int]$X = 200,
     [int]$Y = 200
 )
@@ -59,6 +61,21 @@ Write-Host '[3/4] Rainmeter starten...' -ForegroundColor DarkRed
 Start-Process $RmExe
 Start-Sleep -Seconds 3
 if (-not (Get-Process Rainmeter -ErrorAction SilentlyContinue)) { throw 'Rainmeter laeuft nach dem Start nicht.' }
+
+# Autostart: die winget-Installation von Rainmeter legt keinen an
+if (-not $NoAutostart) {
+    $startup = [Environment]::GetFolderPath('Startup')
+    $lnk = Join-Path $startup 'Rainmeter.lnk'
+    if (-not (Test-Path $lnk)) {
+        $sc = (New-Object -ComObject WScript.Shell).CreateShortcut($lnk)
+        $sc.TargetPath = $RmExe
+        $sc.WorkingDirectory = Split-Path $RmExe
+        $sc.Save()
+        Write-Host "  -> Autostart angelegt: $lnk" -ForegroundColor DarkGray
+    } else {
+        Write-Host '  -> Autostart bereits vorhanden' -ForegroundColor DarkGray
+    }
+}
 
 # 4. Desktop-Icons ausblenden (rueckgaengig: Rechtsklick > Ansicht > Desktopsymbole anzeigen)
 if (-not $SkipExplorer) {

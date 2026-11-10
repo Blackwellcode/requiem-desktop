@@ -44,7 +44,7 @@ winget install --id Rainmeter.Rainmeter --exact
 winget install --id RamenSoftware.Windhawk --exact
 ```
 
-The winget install of Rainmeter does not add an autostart entry. To keep the clock after a reboot, add a shortcut to Rainmeter in `shell:startup`.
+The winget install of Rainmeter does not add an autostart entry; `apply.ps1` creates a Rainmeter shortcut in your Startup folder so the clock survives a reboot (skip with `-NoAutostart`).
 
 1. **Rainmeter skin + hidden desktop icons**
    ```powershell
