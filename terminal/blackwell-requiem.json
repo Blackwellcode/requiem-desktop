@@ -1,7 +1,7 @@
 {
-    "$comment": "Merge 'scheme' into settings.json > schemes and 'theme' into settings.json > themes. Then set \"theme\": \"Seele Requiem\" and profiles.defaults.colorScheme = \"Seele Requiem\".",
+    "$comment": "Merge 'scheme' into settings.json > schemes and 'theme' into settings.json > themes. Then set \"theme\": \"Blackwell Requiem\" and profiles.defaults.colorScheme = \"Blackwell Requiem\".",
     "scheme": {
-        "name": "Seele Requiem",
+        "name": "Blackwell Requiem",
         "background": "#0A0303",
         "foreground": "#DCD8D4",
         "cursorColor": "#C03E45",
@@ -24,7 +24,7 @@
         "brightWhite": "#E6E2DE"
     },
     "theme": {
-        "name": "Seele Requiem",
+        "name": "Blackwell Requiem",
         "tab": {
             "background": "#2A0A0CFF",
             "showCloseButton": "hover",
@@ -40,8 +40,8 @@
         }
     },
     "profileDefaults": {
-        "colorScheme": "Seele Requiem",
-        "backgroundImage": "<path-to-repo>\\wallpaper\\seele-desktop.jpg",
+        "colorScheme": "Blackwell Requiem",
+        "backgroundImage": "<path-to-repo>\\wallpaper\\requiem-desktop.jpg",
         "backgroundImageAlignment": "center",
         "backgroundImageOpacity": 0.12,
         "backgroundImageStretchMode": "uniformToFill",

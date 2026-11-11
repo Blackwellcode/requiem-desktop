@@ -1,4 +1,4 @@
-# Requiem-Prompt fuer Windows PowerShell 5.1 (Seele Blackwell Gothic)
+# Requiem-Prompt fuer Windows PowerShell 5.1 (Blackwell Gothic)
 # Wird aus $PROFILE per Dot-Sourcing geladen. Datei bewusst ASCII-only:
 # Sonderzeichen werden per [char] erzeugt, damit PS 5.1 die Datei ohne BOM korrekt liest.
 #

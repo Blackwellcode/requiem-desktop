@@ -10,7 +10,7 @@ A minimal gothic Windows 11 desktop theme in ember red and halo silver: a spaced
 
 ![Dock and tray](docs/dock.png)
 
-**Windows Terminal** with the "Seele Requiem" scheme, faint wallpaper and the Requiem prompt (`terminal/palette-demo.ps1` prints the swatches)
+**Windows Terminal** with the "Blackwell Requiem" scheme, faint wallpaper and the Requiem prompt (`terminal/palette-demo.ps1` prints the swatches)
 
 ![Windows Terminal](docs/terminal.jpg)
 
@@ -20,10 +20,10 @@ A minimal gothic Windows 11 desktop theme in ember red and halo silver: a spaced
 | :--- | :--- | :--- |
 | Weekday / date / time | [Rainmeter](https://www.rainmeter.net/) 4.5+ | `rainmeter/Requiem/Requiem.ini`, layout `rainmeter/Layouts/Requiem/Rainmeter.ini` |
 | Floating dock and tray | [Windhawk](https://windhawk.net/) + mod *Windows 11 Taskbar Styler*, theme `DockLike` with Requiem overrides | `windhawk/taskbar-styler-requiem.yaml` |
-| Windows Terminal | color scheme + tab theme "Seele Requiem", acrylic, faint wallpaper | `terminal/seele-requiem.json`, `terminal/palette-demo.ps1` |
+| Windows Terminal | color scheme + tab theme "Blackwell Requiem", acrylic, faint wallpaper | `terminal/blackwell-requiem.json`, `terminal/palette-demo.ps1` |
 | PowerShell prompt | Windows PowerShell 5.1, no extra modules | `powershell/requiem-prompt.ps1` |
 | Tab / profile icon | halo + ember cross, generated | `icons/requiem.png`, `icons/make-icon.ps1` |
-| Wallpaper | 1376×768 | `wallpaper/seele-desktop.jpg` |
+| Wallpaper | 1376×768 | `wallpaper/requiem-desktop.jpg` |
 
 ## Palette
 
@@ -59,7 +59,7 @@ winget install --id RamenSoftware.Windhawk --exact
 
    The clock scales with the screen height and follows the Windows scaling level, and weekday/month names follow your Windows date format (`FormatLocale=Local`).
 2. **Dock** – in Windhawk install *Windows 11 Taskbar Styler*, open *Settings > Text mode*, paste `windhawk/taskbar-styler-requiem.yaml`, save. Turn on Windows *Transparency effects* for the acrylic look.
-3. **Terminal** – merge `terminal/seele-requiem.json` into Windows Terminal's `settings.json` (instructions inside the file).
+3. **Terminal** – merge `terminal/blackwell-requiem.json` into Windows Terminal's `settings.json` (instructions inside the file).
 4. **Prompt** – add to `$PROFILE`:
    ```powershell
    . '<path-to-repo>\powershell\requiem-prompt.ps1'
