@@ -6,10 +6,13 @@
 #   -KeepOtherSkins  Leave your other active Rainmeter skins loaded.
 #   -NoAutostart     Do not create the Rainmeter shortcut in the Startup folder.
 #   -SkipExplorer    Do not hide the desktop icons.
+#   -WhatIf          Show what would change without changing anything.
+#   -Confirm         Ask before each change.
 #
 # Before changing Rainmeter.ini a timestamped backup is written next to it:
 #   %APPDATA%\Rainmeter\Rainmeter.ini.requiem-<yyyyMMdd_HHmmss>.bak
 # ==============================================================================
+[CmdletBinding(SupportsShouldProcess)]
 param(
     [string]$X = '7.3%',
     [string]$Y = '17.4%',
@@ -45,20 +48,25 @@ $RmExe = Get-RainmeterExe
 function Stop-Rainmeter {
     $procs = @(Get-Process Rainmeter -ErrorAction SilentlyContinue)
     if ($procs.Count -eq 0) { return }
-    $procs | Stop-Process -Force
+    $procs | Stop-Process -Force -Confirm:$false
     foreach ($p in $procs) { $p.WaitForExit(5000) | Out-Null }
 }
 
 # --- 1. First run: let Rainmeter create its settings file ---------------------
 Write-Host '[1/5] Checking Rainmeter settings...' -ForegroundColor DarkRed
 if (-not (Test-Path $RmIni)) {
+    if (-not $PSCmdlet.ShouldProcess($RmExe, 'Start Rainmeter once to create Rainmeter.ini')) {
+        Write-Host "  -> $RmIni does not exist yet; the remaining steps need it." -ForegroundColor DarkGray
+        return
+    }
     Start-Process $RmExe
     $t = 0
     while (-not (Test-Path $RmIni) -and $t -lt 30) { Start-Sleep -Seconds 1; $t++ }
     if (-not (Test-Path $RmIni)) { throw "Rainmeter did not create $RmIni within 30 s." }
     Start-Sleep -Seconds 2
 }
-Stop-Rainmeter   # Rainmeter rewrites Rainmeter.ini on exit, so it must not run while we edit it
+# Rainmeter rewrites Rainmeter.ini on exit, so it must not run while we edit it
+if ($PSCmdlet.ShouldProcess('Rainmeter', 'Stop process')) { Stop-Rainmeter }
 
 $lines = Get-Content $RmIni -Encoding Unicode
 
@@ -70,15 +78,16 @@ else { $SkinRoot = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Rain
 # --- 2. Deploy skin (UTF-16 LE, required by Rainmeter for non-ASCII) -----------
 Write-Host "[2/5] Deploying skin to $SkinRoot\$Config ..." -ForegroundColor DarkRed
 $skinDir = Join-Path $SkinRoot $Config
-New-Item -ItemType Directory -Force $skinDir | Out-Null
-$content = Get-Content -Raw -Encoding UTF8 $SkinSrc
-[System.IO.File]::WriteAllText((Join-Path $skinDir 'Requiem.ini'), $content, [System.Text.Encoding]::Unicode)
+$skinFile = Join-Path $skinDir 'Requiem.ini'
+if ($PSCmdlet.ShouldProcess($skinFile, 'Write skin (UTF-16 LE)')) {
+    New-Item -ItemType Directory -Force $skinDir -Confirm:$false | Out-Null
+    $content = Get-Content -Raw -Encoding UTF8 $SkinSrc
+    [System.IO.File]::WriteAllText($skinFile, $content, [System.Text.Encoding]::Unicode)
+}
 
 # --- 3. Write layout into Rainmeter.ini (with backup) -------------------------
 Write-Host '[3/5] Writing Rainmeter layout...' -ForegroundColor DarkRed
 $backup = "$RmIni.requiem-$(Get-Date -Format 'yyyyMMdd_HHmmss').bak"
-Copy-Item $RmIni $backup
-Write-Host "  -> backup: $backup" -ForegroundColor DarkGray
 
 $out = New-Object System.Collections.Generic.List[string]
 $section = ''
@@ -99,34 +108,41 @@ $out.Add('Draggable=0')
 $out.Add('SnapEdges=0')
 $out.Add('KeepOnScreen=1')
 $out.Add('AlwaysOnTop=-2')
-[System.IO.File]::WriteAllLines($RmIni, $out, [System.Text.Encoding]::Unicode)
+if ($PSCmdlet.ShouldProcess($RmIni, "Write layout [$Config] (backup: $backup)")) {
+    Copy-Item $RmIni $backup -Confirm:$false
+    Write-Host "  -> backup: $backup" -ForegroundColor DarkGray
+    [System.IO.File]::WriteAllLines($RmIni, $out, [System.Text.Encoding]::Unicode)
+}
 
 # --- 4. Start Rainmeter + autostart -------------------------------------------
 Write-Host '[4/5] Starting Rainmeter...' -ForegroundColor DarkRed
-Start-Process $RmExe
-$t = 0
-while (-not (Get-Process Rainmeter -ErrorAction SilentlyContinue) -and $t -lt 10) { Start-Sleep -Seconds 1; $t++ }
-if (-not (Get-Process Rainmeter -ErrorAction SilentlyContinue)) { throw 'Rainmeter is not running after start.' }
+if ($PSCmdlet.ShouldProcess($RmExe, 'Start Rainmeter')) {
+    Start-Process $RmExe
+    $t = 0
+    while (-not (Get-Process Rainmeter -ErrorAction SilentlyContinue) -and $t -lt 10) { Start-Sleep -Seconds 1; $t++ }
+    if (-not (Get-Process Rainmeter -ErrorAction SilentlyContinue)) { throw 'Rainmeter is not running after start.' }
+}
 
 if (-not $NoAutostart) {
     $lnk = Join-Path ([Environment]::GetFolderPath('Startup')) 'Rainmeter.lnk'
-    if (-not (Test-Path $lnk)) {
+    if (Test-Path $lnk) {
+        Write-Host '  -> autostart already present' -ForegroundColor DarkGray
+    } elseif ($PSCmdlet.ShouldProcess($lnk, 'Create autostart shortcut')) {
         $sc = (New-Object -ComObject WScript.Shell).CreateShortcut($lnk)
         $sc.TargetPath = $RmExe
         $sc.WorkingDirectory = Split-Path $RmExe
         $sc.Save()
         Write-Host "  -> autostart created: $lnk" -ForegroundColor DarkGray
-    } else {
-        Write-Host '  -> autostart already present' -ForegroundColor DarkGray
     }
 }
 
 # --- 5. Hide desktop icons ----------------------------------------------------
-if (-not $SkipExplorer) {
+if ($SkipExplorer) {
+    Write-Host '[5/5] skipped (-SkipExplorer)' -ForegroundColor DarkGray
+} elseif ($PSCmdlet.ShouldProcess('Desktop icons', 'Hide')) {
     Write-Host '[5/5] Hiding desktop icons...' -ForegroundColor DarkRed
     & (Join-Path $Root 'toggle-desktop-icons.ps1')
-} else {
-    Write-Host '[5/5] skipped (-SkipExplorer)' -ForegroundColor DarkGray
 }
 
-Write-Host 'Requiem applied.' -ForegroundColor Green
+if ($WhatIfPreference) { Write-Host 'WhatIf: nothing was changed.' -ForegroundColor Green }
+else { Write-Host 'Requiem applied.' -ForegroundColor Green }
