@@ -45,7 +45,7 @@ winget install --id RamenSoftware.Windhawk --exact
 ```
 
 1. **Rainmeter clock** – pick one:
-   - **Package (easiest):** download `Requiem_<version>.rmskin` from [Releases](https://gh.ali360.cloudns.ch/Blackwellcode/requiem-desktop/releases) and double-click it. Keep *Apply included layout* checked; it loads the clock at the default position and unloads other active skins (Rainmeter backs up replaced files to `Skins\@Backup`).
+   - **Package (easiest):** download `Requiem_<version>.rmskin` from [Releases](https://github.com/Blackwellcode/requiem-desktop/releases) and double-click it. Keep *Apply included layout* checked; it loads the clock at the default position and unloads other active skins (Rainmeter backs up replaced files to `Skins\@Backup`).
    - **Script (also hides desktop icons and adds autostart):**
      ```powershell
      .\apply.ps1                        # deploy skin, set layout, autostart, hide desktop icons
