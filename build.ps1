@@ -23,7 +23,7 @@ $Version = ($verLine -replace '^Version=', '').Trim()
 $rmskinIni = @"
 [rmskin]
 Name=Requiem
-Author=Blackwellcode
+Author=Blackwell Code
 Version=$Version
 LoadType=Layout
 Load=Requiem
