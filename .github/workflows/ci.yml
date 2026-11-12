@@ -1,0 +1,47 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Static checks (parser, apply.ps1 -WhatIf contract, link hosts)
+        run: ./tests/Test-Static.ps1
+      - name: Build package
+        run: |
+          ./build.ps1
+          $pkg = Get-ChildItem dist/*.rmskin | Select-Object -First 1
+          if (-not $pkg) { throw 'no .rmskin built' }
+          $bytes = [System.IO.File]::ReadAllBytes($pkg.FullName)
+          $magic = [System.Text.Encoding]::ASCII.GetString($bytes, $bytes.Length - 7, 6)
+          if ($magic -ne 'RMSKIN') { throw "footer magic '$magic' is not RMSKIN" }
+          Get-Content dist/SHA256SUMS
+
+  lint:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: PSScriptAnalyzer (errors only, pinned version)
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module PSScriptAnalyzer -RequiredVersion 1.24.0 -Scope CurrentUser -Force
+          Import-Module PSScriptAnalyzer -RequiredVersion 1.24.0
+          $r = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Error
+          $r | Format-Table -AutoSize
+          if ($r) { exit 1 }

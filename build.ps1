@@ -65,3 +65,9 @@ try {
 } finally { $fs.Dispose() }
 
 Write-Host ("Built {0} (zip {1} bytes + 16 byte footer)" -f $out, $zipBytes.Length)
+
+# Checksum file to publish next to the package (verify: Get-FileHash -Algorithm SHA256 <file>)
+$hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $out).Hash.ToLowerInvariant()
+$sums = Join-Path $Dist 'SHA256SUMS'
+Set-Content -LiteralPath $sums -Value ('{0}  {1}' -f $hash, (Split-Path $out -Leaf)) -Encoding ASCII
+Write-Host "SHA256 $hash -> $sums"
