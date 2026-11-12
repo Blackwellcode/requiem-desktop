@@ -52,6 +52,7 @@ winget install --id RamenSoftware.Windhawk --exact
      .\apply.ps1 -X 10% -Y 20%          # move the clock (percent of the screen, or pixels)
      .\apply.ps1 -KeepOtherSkins        # leave your other Rainmeter skins loaded
      .\apply.ps1 -NoAutostart -SkipExplorer
+     .\apply.ps1 -WhatIf                # show every change without making it
      ```
      `apply.ps1` finds Rainmeter via the registry, reads the skin folder from `Rainmeter.ini`, and backs that file up to `Rainmeter.ini.requiem-<timestamp>.bak` before changing it.
 
@@ -69,12 +70,37 @@ winget install --id RamenSoftware.Windhawk --exact
 
 ## Revert
 
+Undo what `apply.ps1` changed:
+
 ```powershell
-.\toggle-desktop-icons.ps1 -Show   # show desktop icons again
+# 1. Desktop icons
+.\toggle-desktop-icons.ps1 -Show
+
+# 2. Rainmeter: stop it (it rewrites Rainmeter.ini on exit), then restore the oldest
+#    backup apply.ps1 wrote - that is the state before the first apply
+Get-Process Rainmeter -ErrorAction SilentlyContinue | Stop-Process
+$ini   = Join-Path $env:APPDATA 'Rainmeter\Rainmeter.ini'
+$line  = Get-Content $ini -Encoding Unicode | Where-Object { $_ -match '^SkinPath=' } | Select-Object -First 1
+$skins = if ($line) { ($line -replace '^SkinPath=', '').TrimEnd('\') } else { Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Rainmeter\Skins' }
+$bak   = Get-ChildItem "$ini.requiem-*.bak" -ErrorAction SilentlyContinue | Sort-Object Name | Select-Object -First 1
+if ($bak) { Copy-Item $bak.FullName $ini -Force; "restored $($bak.Name)" }
+
+# 3. Remove the skin folder
+Remove-Item (Join-Path $skins 'Requiem') -Recurse -Force -ErrorAction SilentlyContinue
+
+# 4. Remove the autostart shortcut - only if you had no Rainmeter autostart before
+#    (apply.ps1 never replaces an existing Rainmeter.lnk)
+Remove-Item (Join-Path ([Environment]::GetFolderPath('Startup')) 'Rainmeter.lnk') -ErrorAction SilentlyContinue
 ```
 
-- Dock: Windhawk > Windows 11 Taskbar Styler > Disable.
-- Rainmeter: unload the *Requiem* skin or reactivate your previous skins.
+Delete the `Rainmeter.ini.requiem-*.bak` files yourself once Rainmeter looks right again. Installed via the `.rmskin` package instead: Rainmeter moved the files it replaced to `Skins\@Backup`; unload *Requiem* and load your previous layout in Rainmeter's *Manage* window.
+
+Manual steps:
+
+- Dock: Windhawk > Windows 11 Taskbar Styler > Disable (or paste your previous styler settings back).
+- Terminal: in Windows Terminal's `settings.json` remove the `Blackwell Requiem` scheme and theme, and reset `theme` and `profiles.defaults.colorScheme`.
+- Prompt: delete the `requiem-prompt.ps1` line from `$PROFILE`.
+- Accent color: *Settings > Personalization > Colors*, pick your previous color or *Automatic*.
 
 ## Build the package
 
@@ -91,4 +117,4 @@ An `.rmskin` is a zip archive with a 16-byte footer: the zip length as unsigned 
 
 ## License
 
-Code and configuration: [MIT](LICENSE). The wallpaper (`wallpaper/`) and icon artwork are © Blackwellcode and not covered by the MIT license.
+Code and configuration: [MIT](LICENSE). The wallpaper (`wallpaper/`) and icon artwork are © Blackwell Code and not covered by the MIT license.
